@@ -14,8 +14,8 @@ func SetDefaultLocale(locale string) {
 	defaultLocale = locale
 }
 
-// SetFallbackLocales set translation fallback locale.
-func SetFallbackLocales(locales string) {
+// SetFallbackLocale set translation fallback locale.
+func SetFallbackLocale(locales string) {
 	fallbackLocale = locales
 }
 

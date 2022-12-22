@@ -2,6 +2,44 @@ package lang
 
 import "strings"
 
+const (
+	defaultPath = "resources/lang"
+)
+
+type Config struct {
+	// Path to the where translations files are stored.
+	TranslationPath string
+
+	// The locale used for translation by default.
+	DefaultLocale string
+
+	// The fallback locale used when no translation found for default locale.
+	FallbackLocale string
+}
+
+// DefaultConfigs creates a new translation config instance with default config values.
+func DefaultConfigs() Config {
+	return Config{
+		TranslationPath: defaultPath,
+		DefaultLocale:   "en",
+		FallbackLocale:  "en",
+	}
+}
+
+func (c *Config) defaultValues() {
+	if c.TranslationPath == "" {
+		c.TranslationPath = defaultPath
+	}
+
+	if c.DefaultLocale == "" {
+		c.DefaultLocale = "en"
+	}
+
+	if c.FallbackLocale == "" {
+		c.FallbackLocale = "en"
+	}
+}
+
 // Translator is a tool to translate the translation key based on localization settings.
 type Translator struct {
 	config            Config
@@ -9,6 +47,8 @@ type Translator struct {
 }
 
 func NewTranslator(cfg Config) (*Translator, error) {
+	cfg.defaultValues()
+
 	dm, err := newDictionaryManager(cfg.TranslationPath)
 	if err != nil {
 		return nil, err

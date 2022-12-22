@@ -9,6 +9,7 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+// supportedFileTypes is list of supported translation file types.
 var supportedFileTypes = []string{
 	".yaml",
 	".yml",
@@ -18,16 +19,6 @@ var supportedFileTypes = []string{
 // dictionary is key value variable that the key represents the key and the value
 // represent another key value, in which the key represents the locale and
 // the value is the translation string for that locale.
-//
-// example:
-//
-//	 dictionary{
-//			"user_not_found": {
-//				"en": "User not found.",
-//				"fr": "Utilisateur non trouvé.",
-//				"es": "Usuario no encontrado.",
-//			},
-//		}
 type dictionary map[string]map[string]string
 
 // shelf is a key value variable that the key represents the topic (e.g. validation)
@@ -76,17 +67,17 @@ func (m *dictionaryManager) find(locale, key string) (string, bool) {
 func (m *dictionaryManager) tryToFindInShelf(topic, topicKey, locale string) (string, bool) {
 	dict, ok := m.shelf[topic]
 	if !ok {
-		return "", false
+		return topic + "." + topicKey, false
 	}
 
 	keyDict, ok := dict[topicKey]
 	if !ok {
-		return "", false
+		return topic + "." + topicKey, false
 	}
 
 	tr, ok := keyDict[locale]
 	if !ok {
-		return "", false
+		return topic + "." + topicKey, false
 	}
 
 	return tr, true
@@ -114,6 +105,7 @@ func (m *dictionaryManager) loadTopicFile(topic string) error {
 		}
 
 		m.shelf[topic] = result
+		return nil
 	}
 
 	return fmt.Errorf("translation file not found")
