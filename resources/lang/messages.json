@@ -1,0 +1,11 @@
+{
+	"insufficient_balance": {
+		"en": "Your wallet balance is insufficient for performing this action.",
+		"zh": "您的钱包余额不足以执行此操作。",
+		"hi": "इस क्रिया को करने के लिए आपका वॉलेट बैलेंस अपर्याप्त है।",
+		"es": "El saldo de su billetera es insuficiente para realizar esta acción.",
+		"fr": "Le solde de votre portefeuille est insuffisant pour effectuer cette action.",
+		"ar": "رصيد محفظتك غير كافٍ لتنفيذ هذا الإجراء.",
+		"fa": "موجودی کیف پول شما برای انجام این عمل کافی نیست.",
+	}
+}

@@ -1,0 +1,8 @@
+password_length_is_insufficient:
+  en: "Password length should be more than :length: characters."
+  zh: "密码长度应大于 :length: 个字符。"
+  hi: "पासवर्ड की लंबाई :length: वर्णों से अधिक होनी चाहिए।"
+  es: "La longitud de la contraseña debe tener más de :length: caracteres."
+  fr: "La longueur du mot de passe doit être supérieure à :length: caractères."
+  ar: "يجب أن يكون طول كلمة المرور أكبر من :length: أحرف."
+  fa: "طول رمز عبور باید بیشتر از :length: کاراکتر باشد."

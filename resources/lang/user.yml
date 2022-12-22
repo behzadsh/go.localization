@@ -1,0 +1,16 @@
+not_found:
+  en: "User not found!"
+  zh: "找不到用户!"
+  hi: "उपयोगकर्ता नहीं मिला!"
+  es: "¡Usuario no encontrado!"
+  fr: "Utilisateur non trouvé!"
+  ar: "لم يتم العثور على المستخدم!"
+  fa: "کاربر پیدا نشد!"
+blocked:
+  en: "The user has been blocked!"
+  zh: "该用户已被屏蔽!"
+  hi: "उपयोगकर्ता को ब्लॉक कर दिया गया है!"
+  es: "La usuario ha sido bloqueada!"
+  fr: "L'utilisateur a été bloqué!"
+  ar: "تم حظر المستخدم!"
+  fa: "کاربر مسدود شده است!"
