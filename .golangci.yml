@@ -1,0 +1,68 @@
+run:
+  deadline: 5m
+
+linters-settings:
+  errcheck:
+    check-type-assertions: true
+    check-blank: false
+  govet:
+    check-shadowing: true
+  gci:
+    sections:
+      - standard
+      - default
+      - prefix( github.com/behzadsh/go.localization)
+      - blank
+      - dot
+  godot:
+    capital: true
+  gofumpt:
+    extra-rules: true
+  revive:
+    enable-all-rules: true
+    rules:
+      - name: add-constant
+        disabled: true
+      - name: package-comments
+        disabled: true
+      - name: max-public-structs
+        disabled: true
+      - name: banned-characters
+        disabled: true
+      - name: function-length
+        disabled: true
+      - name: file-header
+        disabled: true
+      - name: unhandled-error
+        arguments:
+          - "fmt.Printf"
+          - "fmt.Println"
+          - "fmt.Print"
+  misspell:
+    locale: US
+    ignore-words:
+      - behzadsh
+  nolintlint:
+    require-explanation: true
+    require-specific: true
+
+linters:
+  enable-all: false
+  enable:
+    - errcheck
+    - gosimple
+    - govet
+    - ineffassign
+    - staticcheck
+    - unused
+    - errname
+    - gci
+    - gocyclo
+    - godot
+    - gofumpt
+    - gosec
+    - revive
+    - misspell
+    - prealloc
+    - unconvert
+    - nolintlint
