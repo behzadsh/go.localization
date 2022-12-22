@@ -1,6 +1,7 @@
 package lang
 
 var defaultTranslator *Translator
+
 var translationPath, defaultLocale, fallbackLocale string
 
 // SetTranslationFilesPath set translation files path.

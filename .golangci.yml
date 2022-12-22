@@ -23,15 +23,26 @@ linters-settings:
     rules:
       - name: add-constant
         disabled: true
-      - name: package-comments
-        disabled: true
-      - name: max-public-structs
+      - name: argument-limit
         disabled: true
       - name: banned-characters
         disabled: true
-      - name: function-length
+      - name: cognitive-complexity
+        disabled: true
+      - name: cyclomatic
         disabled: true
       - name: file-header
+        disabled: true
+      - name: function-length
+        disabled: true
+      - name: function-result-limit
+        arguments: [2]
+      - name: line-length-limit
+        disabled: false
+        arguments: [120]
+      - name: max-public-structs
+        disabled: true
+      - name: package-comments
         disabled: true
       - name: unhandled-error
         arguments:
@@ -45,6 +56,10 @@ linters-settings:
   nolintlint:
     require-explanation: true
     require-specific: true
+  gocyclo:
+    min-complexity: 15
+  gocognit:
+    min-complexity: 15
 
 linters:
   enable-all: false
@@ -58,6 +73,7 @@ linters:
     - errname
     - gci
     - gocyclo
+    - gocognit
     - godot
     - gofumpt
     - gosec

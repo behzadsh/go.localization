@@ -24,7 +24,7 @@ func (t *Translator) Translate(key string, params ...map[string]string) string {
 	return t.TranslateBy(t.config.DefaultLocale, key, params...)
 }
 
-func (t *Translator) TranslateBy(locale string, key string, params ...map[string]string) string {
+func (t *Translator) TranslateBy(locale, key string, params ...map[string]string) string {
 	var p map[string]string
 	if len(params) > 0 {
 		p = params[0]
