@@ -1,6 +1,5 @@
 # go.localization
 ![Coverage](https://img.shields.io/badge/Coverage-97.3%25-brightgreen)
-
 [![Go Report Card](https://goreportcard.com/badge/github.com/behzadsh/go.localization)](https://goreportcard.com/report/github.com/behzadsh/go.localization)
 
 The `go.localization` package provides a simple and convenient way to retrieve strings
