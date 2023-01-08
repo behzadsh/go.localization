@@ -1,4 +1,7 @@
 # go.localization
+
+[![Go Report Card](https://goreportcard.com/badge/github.com/behzadsh/go.localization)](https://goreportcard.com/report/github.com/behzadsh/go.localization)
+
 The `go.localization` package provides a simple and convenient way to retrieve strings
 in various languages, allowing you to easily build multilingual applications.
 

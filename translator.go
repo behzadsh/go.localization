@@ -6,6 +6,7 @@ const (
 	defaultPath = "resources/lang"
 )
 
+// Config is a config struct for configuring the Translator.
 type Config struct {
 	// Path to the where translations files are stored.
 	TranslationPath string
@@ -46,6 +47,7 @@ type Translator struct {
 	dictionaryManager *dictionaryManager
 }
 
+// NewTranslator instantiate a new instance of Translator with given config.
 func NewTranslator(cfg Config) (*Translator, error) {
 	cfg.defaultValues()
 
@@ -60,10 +62,12 @@ func NewTranslator(cfg Config) (*Translator, error) {
 	}, nil
 }
 
+// Translate translates the given key using optional params with default locale.
 func (t *Translator) Translate(key string, params ...map[string]string) string {
 	return t.TranslateBy(t.config.DefaultLocale, key, params...)
 }
 
+// TranslateBy translate the given key using optional params with given locale.
 func (t *Translator) TranslateBy(locale, key string, params ...map[string]string) string {
 	var p map[string]string
 	if len(params) > 0 {
