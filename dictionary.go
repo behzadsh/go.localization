@@ -87,7 +87,7 @@ func (m *dictionaryManager) loadTopicFile(topic string) error {
 	for _, fileType := range supportedFileTypes {
 		path, _ := filepath.Abs(m.path + string(filepath.Separator) + topic + fileType)
 
-		byteVal, err := os.ReadFile(path)
+		byteVal, err := os.ReadFile(filepath.Clean(path))
 		if err != nil {
 			continue
 		}

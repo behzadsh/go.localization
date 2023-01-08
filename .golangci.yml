@@ -82,3 +82,6 @@ linters:
     - prealloc
     - unconvert
     - nolintlint
+
+issues:
+  exclude-use-default: false
