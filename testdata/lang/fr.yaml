@@ -1,0 +1,3 @@
+user:
+  not_found: Utilisateur introuvable
+  greeting: "Bonjour {name}"

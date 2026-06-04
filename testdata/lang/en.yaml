@@ -1,0 +1,7 @@
+user:
+  not_found: User not found
+  greeting: "Hello {name}"
+  profile:
+    title: "{name}'s profile"
+validation:
+  required: "The {field} field is required."

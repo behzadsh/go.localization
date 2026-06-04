@@ -1,176 +1,126 @@
-# go.localization
+# go.localization v2
 
-[![Go Report Card](https://goreportcard.com/badge/github.com/behzadsh/go.localization)](https://goreportcard.com/report/github.com/behzadsh/go.localization)
+A small, idiomatic internationalization (i18n) library for Go. Translations live
+in one file per locale; lookups are dot-paths; placeholders are `{name}`.
 
-The `go.localization` package provides a simple and convenient way to retrieve strings
-in various languages, allowing you to easily build multilingual applications.
-
-#### Key features
-- Support strings with named variable.
-- Support `json` and `yaml` translation files.
-
-## Installation
-to install `go.localization` package, run the following command
-
-```
-go get -u github.com/behzadsh/go.localization
+```bash
+go get github.com/behzadsh/go.localization/v2
 ```
 
-## Defining Translation Strings
-The `go.localization` package, loads the translations from `json` or `yaml` files, which by default should be
-stored in `{ProjectRoot}/resources/lang` directory. The path to translation files are configurable, we discuss it later.
-No matter you choose `json` or `yaml` the structure of the translation file must be like the following example.
+> v2 is a published major version. The import path carries `/v2`, but the package
+> name is still `lang`. v1 (`github.com/behzadsh/go.localization`) is unaffected.
 
-The `yaml` file:
+## Translation files
+
+One file per locale, named by the locale (`en.yaml`, `fr.json`, ...). Each file is
+an arbitrarily nested tree of keys whose leaves are strings.
+
 ```yaml
-key_string:
-  locale1: "translation in locale1"
-  locale2: "translation in locale2"
+# en.yaml
+user:
+  not_found: User not found
+  greeting: "Hello {name}"
+  profile:
+    title: "{name}'s profile"
+validation:
+  required: "The {field} field is required."
 ```
 
-The `json` file:
-```json
-{
-  "key_string": {
-    "locale1": "translation in locale1"
-    "locale2": "translation in locale2"
-  }
-}
-```
+Look a value up by its dot-path: `user.profile.title`. `{name}` placeholders are
+replaced from the params map; an unprovided placeholder is left as-is.
 
-### conventions
-* It is recommended to use `snake_case` names for the translation file name and the translation key.
-* It is recommended to use 2 letter abbreviation for locales, e.g. [ISO 639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes).
+YAML (`.yaml`, `.yml`) and JSON (`.json`) are supported out of the box. Files with
+any other extension are ignored, so a `README.md` can sit beside your locales.
 
-## Retrieving Translation Strings
+## Usage
 
-For retrieving translation strings, you need to pass the translation key and the language to the translation function.
-The translation key is consist of the translation file name and the translation key concatenated by a dot.
-For example "user.not_found" as a translation key, means that the translation is located in a file named
-`user` under the key `not_found`. With this in mind lets continue.
+### From a directory
 
-### Using default configuration and helper functions
-The easiest way to use the `go.localization` package is that you store your translation files in default path
-(as mentioned above in the `{ProjectRoot}/resources/lang`). In this way, you can simply translate the keys like this:
-
-main.go:
 ```go
-package main
-
-import (
-	"fmt"
-	
-	lang "github.com/behzadsh/go.localization"
-)
-
-func main() {
-	lang.Init()
-
-	// Simple translation
-	fmt.Println(lang.Trans("user.not_found"))           // User not found!
-	fmt.Println(lang.Trans("errors.invalid_payload"))   // The payload is invalid!
-	fmt.Println(lang.TransBy("zh", "user.not_found"))   // 找不到用户!
-	
-	// Translation with parameter
-	fmt.Println(lang.Trans("validation.required", map[string]string{"field": "email"}))         // The field 'email' is required.
-	fmt.Println(lang.TransBy("zh", "validation.required", map[string]string{"field": "email"})) // 字段 'email' 是必需的。
+t, err := lang.NewFromDir("resources/lang")
+if err != nil {
+log.Fatal(err)
 }
+
+t.Translate("user.not_found") // "User not found"
+t.Translate("user.greeting", map[string]string{"name": "Sam"}) // "Hello Sam"
+t.TranslateBy("fr", "user.greeting", map[string]string{"name": "Léa"})
 ```
-./resources/lang/user.yaml:
+
+### From embedded files
+
+The loader takes any `io/fs.FS`, so translations can be compiled into the binary:
+
+```go
+//go:embed lang/*.yaml
+var langFS embed.FS
+
+sub, _ := fs.Sub(langFS, "lang")
+t, _ := lang.New(sub, lang.WithDefaultLocale("en"))
+```
+
+### Package-level default
+
+For app-wide convenience, register a default and use the package helpers. Unlike
+v1, calling a helper before setting the default does **not** panic — it returns
+the key unchanged.
+
+```go
+t, _ := lang.NewFromDir("resources/lang")
+lang.SetDefault(t)
+
+lang.Trans("user.not_found")
+lang.TransBy("fr", "user.greeting", map[string]string{"name": "Léa"})
+```
+
+## Options
+
+```go
+lang.New(fsys,
+lang.WithDefaultLocale("en"), // locale used by Translate / Trans (default "en")
+lang.WithFallback("en"),      // consulted when a key is missing (default = default locale)
+lang.WithDecoder(".toml", toml.Unmarshal), // register another file format
+)
+```
+
+`Decoder` is just `func(data []byte, v any) error` — the same shape as
+`yaml.Unmarshal` and `json.Unmarshal`, so most unmarshalers register in one line.
+
+## Behavior
+
+- **Lookup order:** requested locale → fallback locale → the key itself.
+- **Loading is eager:** `New` reads every locale file up front, so a malformed
+  file surfaces immediately rather than at the first translation.
+- **Leaves must be strings:** quote numbers and booleans (`label: "2.0"`), or
+  `New` returns an error naming the offending key and file.
+- **Concurrency:** a `Translator` is immutable after `New` and safe for use by
+  multiple goroutines.
+
+## Migrating from v1
+
+|              | v1                                   | v2                                                          |
+|--------------|--------------------------------------|-------------------------------------------------------------|
+| File layout  | per-topic, `key: {en: ..., fr: ...}` | per-locale, nested key tree                                 |
+| Key depth    | 2 levels only                        | arbitrary nesting                                           |
+| Placeholders | `:name:`                             | `{name}`                                                    |
+| Source       | path string                          | any `io/fs.FS` (`os.DirFS`, `embed.FS`, ...) or path string |
+| Config       | `Config` struct + setters            | functional options                                          |
+
+Before (v1 `user.yaml`):
+
 ```yaml
 not_found:
-  en: "User not found!"
-  zh: "找不到用户!"
+  en: User not found
+  fr: Utilisateur introuvable
 ```
-./resources/lang/errors.yaml:
+
+After (v2 `en.yaml` / `fr.yaml`):
+
 ```yaml
-invalid_payload:
-  en: "The payload is invalid!"
-  zh: "负载无效!"
-```
-./resources/lang/validations.yaml:
-```yaml
-required:
-  en: "The field ':field:' is required."
-  zh: "字段 ':field:' 是必需的。"
-```
-
-### Using the translator struct directly
-
-```go
-package main
-
-import (
-	"fmt"
-	"log"
-
-	lang "github.com/behzadsh/go.localization"
-)
-
-func main() {
-	tr, err := lang.NewTranslator(lang.DefaultConfigs())
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// Simple translation
-	fmt.Println(tr.Translate("user.not_found"))         // User not found!
-	fmt.Println(tr.Translate("errors.invalid_payload")) // The payload is invalid!
-	fmt.Println(tr.TranslateBy("zh", "user.not_found")) // 找不到用户!
-
-	// Translation with parameter
-	fmt.Println(tr.Translate("validation.required", map[string]string{"field": "email"}))         // The field 'email' is required.
-	fmt.Println(tr.TranslateBy("zh", "validation.required", map[string]string{"field": "email"})) // 字段 'email' 是必需的。
-}
-```
-
-## Configuration
-
-You can configure the following options:
-* Translation files path: The path to where the translation files are stored.
-* The default language: The default language used by functions like `Trans` and `Translate`
-* The fallback language: The language used when the no translation found for default or given language.
-
-If you rather use helper function, you can customize these options by these functions before calling `Init()`
-
-```go
-package main
-
-import (
-	lang "github.com/behzadsh/go.localization"
-)
-
-func main() {
-	lang.SetDefaultLocale("zh")
-	lang.SetFallbackLocale("fr")
-	lang.SetTranslationFilesPath("relative/path/to/somewhere/else")
-	lang.Init()
-
-	// ...
-}
-```
-
-Or if you want to use the translator struct directly, you can pass your custom configuration to the constructor.
-
-```go
-package main
-
-import (
-	"log"
-
-	lang "github.com/behzadsh/go.localization"
-)
-
-func main() {
-	tr, err := lang.NewTranslator(lang.Config{
-		TranslationPath: "relative/path/to/somewhere/else",
-		DefaultLocale:   "zh",
-		FallbackLocale:  "fr",
-	})
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// ...
-}
+# en.yaml
+user:
+  not_found: User not found
+# fr.yaml
+user:
+  not_found: Utilisateur introuvable
 ```
