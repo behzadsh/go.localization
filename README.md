@@ -1,6 +1,6 @@
 # go.localization v2
 
-![Coverage](https://img.shields.io/badge/Coverage-97.3%25-brightgreen)
+![Coverage](https://img.shields.io/badge/Coverage-97.8%25-brightgreen)
 [![Go Report Card](https://goreportcard.com/badge/github.com/behzadsh/go.localization)](https://goreportcard.com/report/github.com/behzadsh/go.localization)
 
 A small, idiomatic internationalization (i18n) library for Go. Translations live
