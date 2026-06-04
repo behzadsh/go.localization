@@ -17,7 +17,6 @@ formatters:
         - dot
 
 linters:
-  enable-all: false
   enable:
     - errcheck
     - govet
@@ -95,8 +94,6 @@ linters:
             - "fmt.Print"
     misspell:
       locale: US
-      ignore-words:
-        - behzadsh
     nolintlint:
       require-explanation: true
       require-specific: true
@@ -105,5 +102,3 @@ linters:
     gocognit:
       min-complexity: 15
 
-issues:
-  exclude-default-rules: false
